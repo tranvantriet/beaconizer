@@ -6,7 +6,31 @@ from models import Beacon
 class ShowBeacons(webapp.RequestHandler):
 
     def get(self, id):
-        pass
+        self.response.headers['Content-Type'] = 'text/plain'
+        self.response.out.write('showing.... --%s-- ...' % (id))
+#        b = Beacon.gql("WHERE testid = :1", id)
+        query = Beacon.all()
+        query.filter('testid =', id).order('-timestamp')
+        beacons = []
+        for be in query.fetch(10, 0):
+#            self.response.out.write(be.dynamic_properties())
+            customvars = {}
+            for prop in be.dynamic_properties():
+                customvars[prop.replace("custom__","")] = getattr(be, prop)
+
+            beacon = {'timestamp' : be.timestamp,
+                         'type': be.type,
+                         'IP': be.IP,
+                         'refer': be.refer,
+                         'useragent': be.useragent,
+                         'customvars': customvars,
+                         }
+#                self.response.out.write(getattr(be, prop))
+                
+            beacons += [beacon]
+        self.response.out.write("\n" + str(beacons))
+        
+
 
 class ConsumeBeacons(webapp.RequestHandler):
 
@@ -31,7 +55,7 @@ class ConsumeBeacons(webapp.RequestHandler):
         for var in vars:
             self.response.out.write("\n")
             self.response.out.write(var + ": " + vars[var])
-            setattr(b, var, vars[var])
+            setattr(b, "custom__" + var, vars[var])
 #        self.response.out.write(b.dfd)
             
         b.put()
