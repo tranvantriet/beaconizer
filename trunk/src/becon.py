@@ -1,6 +1,6 @@
 from google.appengine.ext import webapp
 from models import Beacon
-
+import pprint
 
 
 class ShowBeacons(webapp.RequestHandler):
@@ -25,7 +25,9 @@ class ShowBeacons(webapp.RequestHandler):
                          }
                 
             beacons += [beacon]
-        self.response.out.write("\n" + str(beacons))
+        pp = pprint.PrettyPrinter(indent=4)
+        print pp.pprint(beacons)
+        self.response.out.write(pp.pprint(beacons))
         
 
 
