@@ -1,6 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from becon import ConsumeBeacons
+from becon import ConsumeBeacons, ShowBeacons
 
 class MainPage(webapp.RequestHandler):
     
@@ -12,7 +12,8 @@ class MainPage(webapp.RequestHandler):
 
 
 application = webapp.WSGIApplication([('/', MainPage),
-                                     ('/consume/(.*)', ConsumeBeacons)
+                                     ('/consume/(.*)', ConsumeBeacons),
+                                     ('/show/(.*)', ShowBeacons),
                                      ],
                                       debug=True)
 
