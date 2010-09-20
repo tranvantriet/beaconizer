@@ -33,7 +33,7 @@ import pprint
 
 class ShowBeacons(webapp.RequestHandler):
 
-    def get(self, id):
+    def get(self, id, format="html"):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write('showing.... --%s-- ...' % (id))
         query = Beacon.all()
@@ -55,6 +55,12 @@ class ShowBeacons(webapp.RequestHandler):
             beacons += [beacon]
         pp = pprint.PrettyPrinter(indent=4)
         print pp.pprint(beacons)
+        if self.request.get("format") == "json":
+            #todo process and output json
+            self.response.out.write("json")
+        else:
+            #todo make and render into html template
+            self.response.out.write("html")
         self.response.out.write(pp.pprint(beacons))
         
 
