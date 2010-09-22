@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>Showing Beacon: {{ testid }}</title>
 		<style type="text/css" media="screen">
@@ -15,7 +15,7 @@
 		{% for beacon in beacons %}
 		<div class="beacon">
 			<span class="ip">{{ beacon.IP }}</span> - 
-			<span class="timestamp">[{{ beacon.timestamp }}]</span> - 
+			<span class="timestamp">[{{ beacon.timestamp|timesince }} ago]</span> - 
 			<span class="type">{{ beacon.type }}</span> 
 			<span class="refer">{{ beacon.refer }}</span> - 
 			<span class="useragent">{{ beacon.useragent }}</span>
@@ -23,11 +23,11 @@
 				{% for var in beacon.customvars %}
 				<li><span class="customvarname">{{ var.varname }}</span> = <span class="customvarvalue">{{ var.varvalue }}</span></li>
 				{% endfor %}
-			</div>
+			</ul>
 		</div>
 		{% endfor %}
-	
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>	
+		<script type="text/javascript" src="/static/ajax.js"></script>
 	</body>
-	
 	
 </html>
