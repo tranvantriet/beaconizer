@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<title>Showing Beacon: {{ testid }}</title>
+		<style type="text/css" media="screen">
+		.beacon{
+			border-style:solid;
+			border-width:1px;
+			margin:25px;
+		}
+		</style>
+	</head>
+	<body>
+		<h1>Showing Beacon: {{ testid }}</h1>	
+		{% for beacon in beacons %}
+		<div class="beacon">
+			<span class="ip">{{ beacon.IP }}</span> - 
+			<span class="timestamp">[{{ beacon.timestamp }}]</span> - 
+			<span class="type">{{ beacon.type }}</span> 
+			<span class="refer">{{ beacon.refer }}</span> - 
+			<span class="useragent">{{ beacon.useragent }}</span>
+			<ul class="customvars">
+				{% for var in beacon.customvars %}
+				<li><span class="customvarname">{{ var.varname }}</span> = <span class="customvarvalue">{{ var.varvalue }}</span></li>
+				{% endfor %}
+			</div>
+		</div>
+		{% endfor %}
+	
+	</body>
+	
+	
+</html>
