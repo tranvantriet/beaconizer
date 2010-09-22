@@ -29,20 +29,33 @@
 from google.appengine.ext import webapp
 from models import Beacon
 import pprint
+from django.utils import simplejson
+import datetime
+import os
+from google.appengine.ext.webapp import template
+
+class JSONEncoder(simplejson.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%dT%H:%M:%S')
+        else:
+            return simplejson.JSONEncoder.default(self, obj)
 
 
 class ShowBeacons(webapp.RequestHandler):
 
     def get(self, id, format="html"):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.out.write('showing.... --%s-- ...' % (id))
+#        self.response.out.write('showing.... --%s-- ...' % (id))
         query = Beacon.all()
         query.filter('testid =', id).order('-timestamp')
         beacons = []
         for be in query.fetch(10, 0):
-            customvars = {}
+            customvars = []
             for prop in be.dynamic_properties():
-                customvars[prop.replace("custom__","")] = getattr(be, prop)
+                customvars += [{
+                                "varname": prop.replace("custom__",""),
+                                "varvalue" :  getattr(be, prop)
+                                }]
 
             beacon = {'timestamp' : be.timestamp,
                          'type': be.type,
@@ -54,14 +67,20 @@ class ShowBeacons(webapp.RequestHandler):
                 
             beacons += [beacon]
         pp = pprint.PrettyPrinter(indent=4)
-        print pp.pprint(beacons)
+#        print pp.pprint(beacons)
         if self.request.get("format") == "json":
             #todo process and output json
-            self.response.out.write("json")
+            self.response.headers['Content-Type'] = 'application/json'
+            j = JSONEncoder().encode(beacons)
+            self.response.out.write(j)
         else:
             #todo make and render into html template
-            self.response.out.write("html")
-        self.response.out.write(pp.pprint(beacons))
+            template_values = { 'testid': id,
+                               'beacons': beacons,
+                               }
+            path = os.path.join(os.path.dirname(__file__), 'templates/show.html')
+            self.response.out.write(template.render(path, template_values))
+        #        self.response.out.write(pp.pprint(beacons))
         
 
 
